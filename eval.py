@@ -1,6 +1,7 @@
 from Classes.expr import Expr
 from Classes.value import Value
 from Classes.environment import Environment
+from Classes.store import Store
 import math
 
 # looks up val in env 
@@ -59,11 +60,11 @@ def valueToReference(v):
     
 
 # evaluate expr based on env
-def evalExpr(e: Expr, env: Environment):
+def evalExpr(e: Expr, env: Environment, store: Store):
     # helper functions
     def applyAlg2(e1,e2,fun):
-        v1 = valueToNum(evalExpr(e1,env))
-        v2 = valueToNum(evalExpr(e2,env))
+        v1 = valueToNum(evalExpr(e1,env,store))
+        v2 = valueToNum(evalExpr(e2,env,store))
         v3 = fun(v1,v2)
         return Value.NumValue(v3)
         
@@ -71,100 +72,100 @@ def evalExpr(e: Expr, env: Environment):
         case Expr.Const(n):
             match n:
                 case Value.NumValue(f):
-                    return f
+                    return (f,store)
                 case _:
                     return Value.ErrorValue()
                 
-        case Expr.Ident(s):
-            return lookupEnv(env,s)
+        case Expr.Ident(x):
+            return lookupEnv(env,x)
         
         # algebraic and artithmetic
         case Expr.Plus(e1,e2):
-            v1 = evalExpr(e1, env)
-            v2 = evalExpr(e2, env)
-            return v1 + v2
+            (v1, store1) = evalExpr(e1, env, store)
+            (v2, store2) = evalExpr(e2, env, store1)
+            return (v1 + v2, store2)
         
         case Expr.Minus(e1,e2):
-            v1 = evalExpr(e1, env)
-            v2 = evalExpr(e2, env)
-            return v1 - v2
+            (v1, store1) = evalExpr(e1, env, store)
+            (v2, store2) = evalExpr(e2, env, store1)
+            return (v1 - v2, store2)
         
         case Expr.Mult(e1,e2):
-            v1 = evalExpr(e1, env)
-            v2 = evalExpr(e2, env)
-            return v1 * v2
+            (v1, store1) = evalExpr(e1, env, store)
+            (v2, store2) = evalExpr(e2, env, store1)
+            return (v1 * v2, store2)
 
         case Expr.Div(e1,e2):
-            v1 = evalExpr(e1, env)
+            (v1,store1) = evalExpr(e1, env,store)
             if (v1 == 0.0):
                 raise Expr.ExprError(f"e1 cannot be 0")
-            v2 = evalExpr(e2, env)
-            return v1 / v2
+            (v2,store2) = evalExpr(e2, env,store1)
+            return (v1 / v2, store2)
         
         case Expr.Log(x,base):
             if (base <= 0.0):
                 raise Expr.ExprError(f"{base} is an invalid base")
             else:
-                v1 = evalExpr(x, env)
-                v2 = evalExpr(base, env)
-                return math.log(v1,v2)
+                (v1,store1) = evalExpr(x, env,store)
+                (v2,store2) = evalExpr(base, env,store1)
+                return (math.log(v1,v2), store2)
             
         case Expr.Exp(e1,e2):
-            v1 = evalExpr(e1, env)
-            v2 = evalExpr(e2, env)
-            return v1 ** v2
+            (v1, store1) = evalExpr(e1, env, store)
+            (v2, store2) = evalExpr(e2, env, store1)
+            return (v1 ** v2, store2)
         
         # trig
         case Expr.Sine(e1):
-            v1 = evalExpr(e1, env)
-            return math.sin(v1)
+            (v1, store1) = evalExpr(e1, env,store)
+            return (math.sin(v1), store1)
         
         case Expr.Cos(e1):
-            v1 = evalExpr(e1, env)
-            return math.cos(v1)
+            (v1, store1) = evalExpr(e1, env,store)
+            return (math.cos(v1), store1)
         
         case Expr.Tan(e1):
-            v1 = evalExpr(e1, env)
-            return math.tan(v1)
+            (v1, store1) = evalExpr(e1, env,store)
+            return (math.tan(v1), store1)
             
         # conditionals
         case Expr.Geq(e1,e2):
-            v1 = evalExpr(e1, env)
-            v2 = evalExpr(e2, env)
-            return v1 >= v2 
+            (v1, store1) = evalExpr(e1, env, store)
+            (v2, store2) = evalExpr(e2, env, store1)
+            return (v1 >= v2 , store2)
         
         case Expr.Great(e1,e2):
-            v1 = evalExpr(e1, env)
-            v2 = evalExpr(e2, env)
-            return v1 > v2 
+            (v1, store1) = evalExpr(e1, env, store)
+            (v2, store2) = evalExpr(e2, env, store1)
+            return (v1 > v2 , store2)
         
         case Expr.Leq(e1,e2):
-            v1 = evalExpr(e1, env)
-            v2 = evalExpr(e2, env)
-            return v1 <= v2 
+            (v1, store1) = evalExpr(e1, env, store)
+            (v2, store2) = evalExpr(e2, env, store1)
+            return (v1 <= v2 , store2)
         
         case Expr.Less(e1,e2):
-            v1 = evalExpr(e1, env)
-            v2 = evalExpr(e2, env)
-            return v1 < v2 
+            (v1, store1) = evalExpr(e1, env, store)
+            (v2, store2) = evalExpr(e2, env, store1)
+            return (v1 < v2 , store2)
         
         case Expr.Eq(e1,e2):
-            v1 = evalExpr(e1, env)
-            v2 = evalExpr(e2, env)
-            return v1 == v2 
+            (v1, store1) = evalExpr(e1, env, store)
+            (v2, store2) = evalExpr(e2, env, store1)
+            return (v1 == v2 , store2)
         
         case Expr.Neq(e1,e2):
-            v1 = evalExpr(e1, env)
-            v2 = evalExpr(e2, env)
-            return v1 != v2 
+            (v1, store1) = evalExpr(e1, env, store)
+            (v2, store2) = evalExpr(e2, env, store1)
+            return (v1 != v2 , store2)
         
         # if then else
         case Expr.IfThenElse(e1,e2,e3):
-            v1 = evalExpr(e1, env)
+            (v1, store1) = evalExpr(e1, env, store)
             match v1:
                 case Value.BoolValue(True):
-                    return evalExpr(e2, env)
+                    return evalExpr(e2, env, store1)
                 case Value.BoolValue(False):
-                    return evalExpr(e3, env)
+                    return evalExpr(e3, env, store1)
                 case _:
                     raise Expr.ExprError("If-Then-Else condition {e1} is non-boolean")
