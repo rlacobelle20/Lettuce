@@ -113,6 +113,19 @@ def evalExpr(e: Expr, env: Environment):
             v1 = evalExpr(e1, env)
             v2 = evalExpr(e2, env)
             return v1 ** v2
+        
+        # trig
+        case Expr.Sine(e1):
+            v1 = evalExpr(e1, env)
+            return math.sin(v1)
+        
+        case Expr.Cos(e1):
+            v1 = evalExpr(e1, env)
+            return math.cos(v1)
+        
+        case Expr.Tan(e1):
+            v1 = evalExpr(e1, env)
+            return math.tan(v1)
             
         # conditionals
         case Expr.Geq(e1,e2):

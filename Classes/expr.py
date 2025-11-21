@@ -132,13 +132,59 @@ class Expr:
                 raise ValueError
             else:
                 self.x = e1      # number for log
-                self.e = e2    # base for log, default base 10  
+                self.e = e2      # base for log, default base 10  
                 
         def __repr__(self) -> str:
             return f"Exp({self.x!r},{self.e!r})"
         
         def __str__(self):
             return f"{self.x} ^ {self.e}"
+        
+    # trig functions
+    class Sine:
+        __match_args__ = ("e",)
+        
+        def __init__(self, e):
+            if not isinstance(e, Expr):
+                raise ValueError
+            else:
+                self.e = e         # initializes as expr
+                
+        def __repr__(self) -> str:
+            return f"Sine({self.e!r})"
+        
+        def __str__(self):
+            return f"sine({self.e})"
+        
+    class Cos:
+        __match_args__ = ("e",)
+        
+        def __init__(self, e):
+            if not isinstance(e, Expr):
+                raise ValueError
+            else:
+                self.e = e         # initializes as expr
+                
+        def __repr__(self) -> str:
+            return f"Cos({self.e!r})"
+        
+        def __str__(self):
+            return f"cosine({self.e})"
+        
+    class Tan:
+        __match_args__ = ("e",)
+        
+        def __init__(self, e):
+            if not isinstance(e, Expr):
+                raise ValueError
+            else:
+                self.e = e         # initializes as expr
+                
+        def __repr__(self) -> str:
+            return f"Tan({self.e!r})"
+        
+        def __str__(self):
+            return f"tangent({self.e})"
     
     # conditionals
     # greater than equal to
