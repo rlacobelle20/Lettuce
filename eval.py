@@ -157,3 +157,14 @@ def evalExpr(e: Expr, env: Environment):
             v1 = evalExpr(e1, env)
             v2 = evalExpr(e2, env)
             return v1 != v2 
+        
+        # if then else
+        case Expr.IfThenElse(e1,e2,e3):
+            v1 = evalExpr(e1, env)
+            match v1:
+                case Value.BoolValue(True):
+                    return evalExpr(e2, env)
+                case Value.BoolValue(False):
+                    return evalExpr(e3, env)
+                case _:
+                    raise Expr.ExprError("If-Then-Else condition {e1} is non-boolean")

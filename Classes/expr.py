@@ -279,8 +279,8 @@ class Expr:
             if not isinstance(e1, Expr) or not isinstance(e2, Expr):
                 raise ValueError
             else:
-                self.e1 = e1      # number for log
-                self.e2 = e2    # base for log, default base 10  
+                self.e1 = e1        # expr 1
+                self.e2 = e2        # expr 2
                 
         def __repr__(self) -> str:
             return f"Neq({self.e1!r},{self.e2!r})"
@@ -290,7 +290,21 @@ class Expr:
     
     # if then else
     class IfThenElse:
-        pass
+        __match_args__ = ("e1","e2","e3")
+        
+        def __init__(self, e1, e2, e3):
+            if not isinstance(e1, Expr) or not isinstance(e2, Expr) or not isinstance(e3, Expr):
+                raise ValueError
+            else:
+                self.e1 = e1        # expr 1
+                self.e2 = e2        # expr 2
+                self.e3 = e3        # expr 3
+                
+        def __repr__(self) -> str:
+            return f"IfThenElse({self.e1!r},{self.e2!r},{self.e3!r})"
+        
+        def __str__(self):
+            return f"If ({self.e1}):\n\t{self.e2}\nelse\n\t{self.e3}"
             
     # function
     class FunDef:
