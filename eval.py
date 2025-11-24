@@ -1,7 +1,7 @@
 from Classes.expr import Expr
 from Classes.value import Value
 from Classes.environment import Environment
-from Classes.store import Store
+from Classes.store import ImmutableStore
 import math
 
 # looks up val in env 
@@ -60,7 +60,7 @@ def valueToReference(v):
     
 
 # evaluate expr based on env
-def evalExpr(e: Expr, env: Environment, store: Store):
+def evalExpr(e: Expr, env: Environment, store: ImmutableStore):
     # helper functions
     def applyAlg2(e1,e2,fun):
         v1 = valueToNum(evalExpr(e1,env,store))
