@@ -304,14 +304,40 @@ class Expr:
             return f"IfThenElse({self.e1!r},{self.e2!r},{self.e3!r})"
         
         def __str__(self):
-            return f"If ({self.e1}):\n\t{self.e2}\nelse\n\t{self.e3}"
+            return f"If ({self.e1}): {self.e2}\nelse {self.e3}"
             
     # function
     class FunDef:
-        pass
+        __match_args__ = ("param", "bodyExpr")
+        
+        def __init__(self, param:str, bodyExpr) -> None:
+            if not isinstance(bodyExpr,Expr):
+                raise ValueError
+            else:
+                self.param = param
+                self.bodyExpr = bodyExpr
+                
+        def __repr__(self) -> str:
+            return f"FunDef({self.param!r},{self.bodyExpr!r})"
+        
+        def __str__(self) -> str:
+            return f"function({self.param}):\n\t{self.bodyExpr}"
     
     class FunCall:
-        pass
+        __match_args__ = ("funCalled", "argExpr")
+        
+        def __init__(self, funCalled, argExpr) -> None:
+            if not isinstance(funCalled,Expr) or not isinstance(argExpr,Expr):
+                raise ValueError
+            else:
+                self.funCalled = funCalled
+                self.argExpr = argExpr
+                
+        def __repr__(self) -> str:
+            return f"FunCall({self.funCalled!r},{self.argExpr!r})"
+        
+        def __str__(self) -> str:
+            return f"{self.funCalled}({self.argExpr})"
     
     # reference
     class NewRef:
@@ -325,7 +351,21 @@ class Expr:
     
     # let
     class Let:
-        pass
+        __match_args__ = ("s", "defExpr", "bodyExpr")
+        
+        def __init__(self, s, defExpr, bodyExpr) -> None:
+            if not isinstance(s,str) or not isinstance(defExpr, Expr) or not isinstance(bodyExpr,Expr):
+                raise ValueError
+            else:
+                self.s = s
+                self.defExpr = defExpr
+                self.bodyExpr = bodyExpr
+                
+        def __repr__(self) -> str:
+            return f"Let({self.s!r},{self.defExpr!r},{self.bodyExpr!r})"
+        
+        def __str__(self) -> str:
+            return f"Let {self.s} = function({self.defExpr}):\n({self.bodyExpr})"
     
     class LetRec:
         pass
