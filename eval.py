@@ -174,18 +174,22 @@ def evalExpr(e: Expr, env: Environment, store: ImmutableStore):
         case Expr.Let(x, e1, e2):
             (v1,store1) = evalExpr(e1, env, store)
             env2 = Environment.Extend(x, v1, env)
-            return evalExpr(e2, env2)
+            return evalExpr(e2, env2, store1)
         
         # functions
-        case Expr.FunDef(x, e):
-            return (Value.Closure(x, e, env), store)
+        case Expr.FunDef(x, e1):
+            return (Value.Closure(x, e1, env), store)
         
         case Expr.FunCall(e1,e2):
-            (v1, store1) = evalExpr(e1,env)
-            (v2, store2) = evalExpr(e2,env)
+            (v1, store1) = evalExpr(e1,env, store)
+            (v2, store2) = evalExpr(e2,env, store)
             match v1:
                 case Value.Closure(x, closure_ex, closed_env):
                     new_env = Environment.Extend(x, v2, closed_env)
                     return evalExpr(closure_ex, new_env)
                 case _:
                     raise Expr.ExprError(f"Function call error: {e1} does not evaluate to a closure")
+                
+        #references
+        case Expr.NewRef(e1):
+            (v, store1) = evalExpr(e1, env, store)

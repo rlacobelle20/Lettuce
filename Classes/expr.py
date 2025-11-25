@@ -341,13 +341,50 @@ class Expr:
     
     # reference
     class NewRef:
-        pass
+        __match_args__ = ("e")
+        
+        def __init__(self, e) -> None:
+            if not isinstance(e, Expr):
+                raise ValueError
+            else:
+                self.e = e
+        
+        def __repr__(self) -> str:
+            return f"NewRef({self.e!r})"
+        
+        def __str__(self) -> str:
+            return f"{self.e}"
+        
+    class DeRef:
+        __match_args__ = ("lval")
+        
+        def __init__(self, lval) -> None:
+            if not isinstance(lval,Expr):
+                raise ValueError
+            else:
+                self.lval = lval
+        
+        def __repr__(self) -> str:
+            return f"DeRef({self.lval!r})"
+        
+        def __str__(self) -> str:
+            return f"{self.lval}"
     
     class AssignRef:
-        pass
-    
-    class DeRef:
-        pass
+        __match_args__ = ("lval, rval")
+        
+        def __init__(self, lval, rval) -> None:
+            if not isinstance(lval,Expr) or not isinstance(rval,Expr):
+                raise ValueError
+            else:
+                self.lval = lval
+                self.rval = rval
+        
+        def __repr__(self) -> str:
+            return f"AssignRef({self.lval!r},{self.rval!r})"
+        
+        def __str__(self) -> str:
+            return f"{self.lval} -> {self.rval}"
     
     # let
     class Let:
